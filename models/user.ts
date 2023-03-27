@@ -8,55 +8,55 @@ import {
   DataType,
   Default,
   Unique,
-  HasMany,
-} from 'sequelize-typescript';
-import { UserRole } from '../interface/user';
-import Product from './product';
+  HasMany
+} from 'sequelize-typescript'
+import { UserRole } from '../interface/user'
+import Product from './product'
 
 export interface IUserModel {
-  id?: string;
-  username: string;
-  password: string;
-  role: UserRole;
-  deposit: number;
-  totalSpent: number;
+  id?: string
+  username: string
+  password: string
+  role: UserRole
+  deposit: number
+  totalSpent: number
 }
 
 @Table({
   tableName: 'user',
-  timestamps: true,
+  timestamps: true
 })
 
 export default class User extends Model implements IUserModel {
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column
-  id!: string;
+    id!: string
 
   @AllowNull(false)
   @NotEmpty
   @Unique(true)
   @Column
-  username!: string;
+    username!: string
 
   @AllowNull(false)
   @NotEmpty
   @Column
-  password!: string;
+    password!: string
 
   @AllowNull(false)
   @NotEmpty
   @Column
-  role!: UserRole;
+    role!: UserRole
 
   @AllowNull(false)
   @Column
-  deposit!: number;
+    deposit!: number
 
   @AllowNull(false)
   @Column
-  totalSpent!: number;
+    totalSpent!: number
 
   @HasMany(() => Product)
-  product!: Product[];
+    product!: Product[]
 }

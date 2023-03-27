@@ -1,19 +1,21 @@
 export interface IProductSearchParam {
-  id?: string;
+  id?: string
 }
 
 export interface IProductModel {
-  id: string;
-  amountAvailable: number;
-  productName: string;
-  cost: number;
-  sellerId: string;
+  dataValues: any
+  id: string
+  amountAvailable: number
+  productName: string
+  cost: number
+  sellerId: string
 }
 
 export interface IProductInput {
-  id?: string;
-  amountAvailable: number;
-  productName: string;
-  cost: number;
-  sellerId: string;
+  [x: string]: any
+  id?: string
+  amountAvailable: number
+  productName: string
+  cost: number
+  sellerId: string
 }

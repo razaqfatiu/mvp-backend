@@ -1,19 +1,18 @@
-import express, { Express, Request, Response } from 'express';
-import { createServer } from 'http';
+import express, { type Express, type Request, type Response } from 'express';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import { errorHandler, notFound } from './middlewares/error';
-import sequelize from './db/db';
 import userRoutes from './routes/user';
 import productRoutes from './routes/product';
 
+import { createServer } from 'http';
+import sequelize from './db/db';
+
+import dotenv from 'dotenv';
+
 dotenv.config();
 
-const app: Express = express();
-const server = createServer(app);
-
-const PORT = process.env.PORT || 5050;
+export const app: Express = express();
 
 app.use(morgan('dev'));
 
@@ -22,7 +21,7 @@ app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: false }));
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome');
+  res.send('Welcome, use either: /api/v1/user OR /api/v1/product');
 });
 
 app.use('/api/v1/user', userRoutes);
@@ -30,6 +29,10 @@ app.use('/api/v1/product', productRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
+
+const server = createServer(app);
+
+const PORT = process.env.PORT ?? 5050;
 
 const start = async (): Promise<void> => {
   try {
@@ -46,3 +49,5 @@ const start = async (): Promise<void> => {
 };
 
 void start();
+
+export default server;

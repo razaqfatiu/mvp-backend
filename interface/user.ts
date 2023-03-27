@@ -4,15 +4,15 @@ export enum UserRole {
 }
 
 export interface IUserSearchParam {
-  id?: string;
-  username?: string;
+  id?: string
+  username?: string
 }
 
 export interface IUserInput {
-  id?: string;
-  username: string;
-  password: string;
-  role: UserRole;
-  deposit: number;
-  totalSpent: number;
+  id?: string
+  username: string
+  password: string
+  role: UserRole
+  deposit: number
+  totalSpent: number
 }

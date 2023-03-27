@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { jsonResponse } from '../helpers/api.util';
 import { verifyToken } from '../helpers/user.util';
 
 interface RequestWithUser extends Request {
-  user: any;
+  user: any
 }
 
 export const authMiddleware = (
@@ -12,7 +12,7 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const { access } = req.cookies;
+    const access: string | undefined = req.cookies.access;
     if (!access) {
       return jsonResponse({ res, message: 'UnAuthorized', status: 401 });
     }

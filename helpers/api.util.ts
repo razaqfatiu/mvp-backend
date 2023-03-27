@@ -1,21 +1,21 @@
-import { Response } from 'express';
+import { type Response } from 'express'
 
 interface IApiResponse {
-  res: Response;
-  status: number;
-  message: string;
-  data?: any;
-  page?: number;
-  limit?: number;
-  total?: number;
+  res: Response
+  status: number
+  message: string
+  data?: any
+  page?: number
+  limit?: number
+  total?: number
 }
 
 export const jsonResponse: (arg0: IApiResponse) => Response = ({
   res,
   status,
   message,
-  data,
-}: IApiResponse) => res.status(status || 200).json({ message, data });
+  data
+}: IApiResponse) => res.status(status || 200).json({ message, data })
 
 export const paginatedResponse = ({
   res,
@@ -24,6 +24,6 @@ export const paginatedResponse = ({
   data = null,
   page,
   limit,
-  total,
+  total
 }: IApiResponse) =>
-  res.status(status || 200).json({ message, data, page, limit, total });
+  res.status(status || 200).json({ message, data, page, limit, total })

@@ -7,11 +7,10 @@ import {
   NotEmpty,
   DataType,
   Default,
-  Unique,
   BelongsTo,
   ForeignKey,
 } from 'sequelize-typescript';
-import { IProductModel } from '../interface/product';
+import { type IProductModel } from '../interface/product';
 import User from './user';
 
 @Table({
@@ -22,29 +21,29 @@ export default class Product extends Model implements IProductModel {
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column
-  id!: string;
+    id!: string;
 
   @AllowNull(false)
   @NotEmpty
   @Column
-  amountAvailable!: number;
+    amountAvailable!: number;
 
   @AllowNull(false)
   @NotEmpty
   @Column
-  productName!: string;
+    productName!: string;
 
   @AllowNull(false)
   @NotEmpty
   @Column
-  cost!: number;
+    cost!: number;
 
   @AllowNull(false)
   @NotEmpty
   @Column
   @ForeignKey(() => User)
-  sellerId!: string;
+    sellerId!: string;
 
   @BelongsTo(() => User)
-  seller!: User;
+    seller!: User;
 }
