@@ -1,10 +1,10 @@
 import sequelize from '../../db/db';
-import { IUserInput, IUserSearchParam } from '../../interface/user';
-import User, { IUserModel } from '../user';
+import { type IUserInput, type IUserSearchParam } from '../../interface/user';
+import User, { type IUserModel } from '../user';
 
 export const findUser = async (
   param: IUserSearchParam,
-  pv: boolean = false
+  pv = false
 ): Promise<IUserModel | null> => {
   try {
     return await sequelize.transaction(
@@ -44,6 +44,21 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (param: IUserSearchParam) => {
+  try {
+    return await sequelize.transaction(
+      async (transaction) =>
+        await User.destroy({
+          where: { ...param },
+          transaction,
+        })
+    );
+  } catch (error) {
+    console.log((error as Error).message);
+    throw new Error('Something went wrong');
+  }
+};
+
+export const deleteAllUsers = async (param: IUserSearchParam) => {
   try {
     return await sequelize.transaction(
       async (transaction) =>

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { jsonResponse } from '../helpers/api.util';
 import {
   comparePassword,
@@ -9,7 +9,7 @@ import {
   validateUser,
   verifyToken,
 } from '../helpers/user.util';
-import { IUserInput, UserRole } from '../interface/user';
+import { type IUserInput, UserRole } from '../interface/user';
 import {
   createUser,
   deleteUser,
@@ -37,9 +37,9 @@ export const signup = async (
   try {
     const { error } = validateUser(req.body);
 
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message || '',
         status: 403,
       });
@@ -50,12 +50,13 @@ export const signup = async (
 
     const userExists = await findUser({ username });
 
-    if (userExists)
+    if (userExists != null) {
       return jsonResponse({
         res,
         message: 'User Exists, kindly choose another username',
         status: 400,
       });
+    }
 
     password = await hashPassword(password);
 
@@ -86,7 +87,7 @@ export const login = async (
     const { username, password } = req.body;
     const userExists = await findUser({ username }, true);
 
-    if (!userExists) {
+    if (userExists == null) {
       return jsonResponse({ res, message: 'User not found', status: 404 });
     }
 
@@ -104,12 +105,13 @@ export const login = async (
 
     if (access) {
       const ver: any = verifyToken({ token: access });
-      if (ver?.username === username)
+      if (ver?.username === username) {
         return jsonResponse({
           res,
           message: 'This user is previously signed in',
           status: 200,
         });
+      }
     }
 
     const token: string = signToken({
@@ -126,6 +128,23 @@ export const login = async (
   }
 };
 
+export const logout = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.clearCookie('access');
+    return jsonResponse({
+      res,
+      message: 'Logged out successfully',
+      status: 200,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 export const updateProfile = async (
   req: Request,
   res: Response,
@@ -137,9 +156,9 @@ export const updateProfile = async (
 
     const { error } = validateUpdateUser(req.body);
 
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message || '',
         status: 403,
       });
@@ -148,12 +167,13 @@ export const updateProfile = async (
     const { id } = req.user;
     const userExists = await findUser({ username });
 
-    if (userExists && userExists.username !== req.user.username)
+    if (userExists != null && userExists.username !== req.user.username) {
       return jsonResponse({
         res,
         message: 'The specified username is taken',
         status: 404,
       });
+    }
 
     password = password ? await hashPassword(password) : undefined;
 
@@ -217,14 +237,14 @@ export const deposit = async (
       return jsonResponse({
         res,
         message: 'Only buyers can deposit',
-        status: 400,
+        status: 403,
       });
     }
     const { error } = validateDeposit(req.body);
 
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message || '',
         status: 403,
       });

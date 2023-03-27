@@ -1,35 +1,35 @@
-import Joi, { ValidationResult } from 'joi';
-import { denomination } from '.';
-import { IUserInput, UserRole } from '../interface/user';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import Joi, { type ValidationResult } from 'joi'
+import { denomination } from '.'
+import { type IUserInput, UserRole } from '../interface/user'
+import jwt, { type JwtPayload } from 'jsonwebtoken'
+import dotenv from 'dotenv'
 
-dotenv.config();
+import { genSalt, hash, compare } from 'bcrypt'
 
-import { genSalt, hash, compare } from 'bcrypt';
+dotenv.config()
 
-const secret: string = process.env.JWT_SECRET || '';
+const secret: string = process.env.JWT_SECRET || ''
 
 export const hashPassword = async (password: string): Promise<string> => {
-  const salt: string = await genSalt(10);
-  return await hash(password, salt);
-};
+  const salt: string = await genSalt(10)
+  return await hash(password, salt)
+}
 
 export const comparePassword = async (
   password: string,
   hash: string
 ): Promise<boolean> => {
-  return await compare(password, hash);
-};
+  return await compare(password, hash)
+}
 
 export const signToken = ({
   id,
   role,
-  username,
-}: Partial<IUserInput>): string => jwt.sign({ id, role, username }, secret);
+  username
+}: Partial<IUserInput>): string => jwt.sign({ id, role, username }, secret)
 
-export const verifyToken = ({ token }: { token: string; }): JwtPayload | string =>
-  jwt.verify(token, secret);
+export const verifyToken = ({ token }: { token: string }): JwtPayload | string =>
+  jwt.verify(token, secret)
 
 export const validateUser = (
   body: Partial<IUserInput>
@@ -42,11 +42,11 @@ export const validateUser = (
       .valid(UserRole.BUYER, UserRole.SELLER)
       .messages({
         'any.only': 'role should be of type: buyer/seller only',
-        'string.required': 'role is required',
-      }),
-  });
-  return schema.validate(body);
-};
+        'string.required': 'role is required'
+      })
+  })
+  return schema.validate(body)
+}
 
 export const validateUpdateUser = (
   body: Partial<IUserInput>
@@ -56,11 +56,11 @@ export const validateUpdateUser = (
     password: Joi.string(),
     role: Joi.string().valid(UserRole.BUYER, UserRole.SELLER).messages({
       'any.only': 'role should be of type: buyer/seller only',
-      'string.required': 'role is required',
-    }),
-  });
-  return schema.validate(body);
-};
+      'string.required': 'role is required'
+    })
+  })
+  return schema.validate(body)
+}
 
 export const validateDeposit = (
   body: Partial<IUserInput>
@@ -75,8 +75,8 @@ export const validateDeposit = (
         'number.min': 'Deposit can be a minimum of 5 ',
         'number.max': 'Deposit can be a maximum of 100',
         'any.only': `Deposit can only be within the denomination: ${denomination}`,
-        'number.multiple': `Deposit should be a mulptiple of 5`,
-      }),
-  });
-  return schema.validate(body);
-};
+        'number.multiple': 'Deposit should be a mulptiple of 5'
+      })
+  })
+  return schema.validate(body)
+}

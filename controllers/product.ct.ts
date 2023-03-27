@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { jsonResponse } from '../helpers/api.util';
 import {
   getDenominations,
@@ -6,7 +6,7 @@ import {
   validateNewProd,
   validatePutProd,
 } from '../helpers/product.util';
-import { IProductInput } from '../interface/product';
+import { type IProductInput } from '../interface/product';
 import { UserRole } from '../interface/user';
 import {
   createProduct,
@@ -15,7 +15,7 @@ import {
   updateProduct,
 } from '../models/dal/product.dal';
 import { findUser, updateUser } from '../models/dal/user.dal';
-import { IUserModel } from '../models/user';
+import { type IUserModel } from '../models/user';
 
 export const addNewProduct = async (
   req: Request,
@@ -27,16 +27,16 @@ export const addNewProduct = async (
 
     if (role !== UserRole.SELLER) {
       return jsonResponse({
-        res: res,
+        res,
         message: 'Forbidden, only sellers can upload a new product!',
         status: 403,
       });
     }
 
     const { error } = validateNewProd(req.body);
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message,
         status: 403,
       });
@@ -55,7 +55,7 @@ export const addNewProduct = async (
     });
 
     return jsonResponse({
-      res: res,
+      res,
       message: 'Added new product successfully!',
       status: 201,
       data: product.dataValues,
@@ -73,9 +73,9 @@ export const getProduct = async (
   try {
     const { error } = validateFindProd(req.params);
 
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message || '',
         status: 403,
       });
@@ -83,9 +83,9 @@ export const getProduct = async (
 
     const { id } = req.params;
 
-    const prod = await findProduct({ id });
+    const prod: IProductInput | null = await findProduct({ id });
 
-    if (!prod) {
+    if (prod == null) {
       return jsonResponse({
         res,
         message: 'Product Not Found!',
@@ -112,9 +112,9 @@ export const modifyProduct = async (
   try {
     const { error } = validatePutProd(req.body);
 
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message || '',
         status: 403,
       });
@@ -124,7 +124,7 @@ export const modifyProduct = async (
 
     const prod = await findProduct({ id });
 
-    if (!prod) {
+    if (prod == null) {
       return jsonResponse({
         res,
         message: 'Product Not Found!',
@@ -151,12 +151,13 @@ export const modifyProduct = async (
       cost,
     };
 
-    await updateProduct({ ...data }, { id });
+    const update = await updateProduct({ ...data }, { id });
 
     return jsonResponse({
       res,
       message: 'Product update success',
       status: 200,
+      data: update[1][0],
     });
   } catch (error) {
     next(error);
@@ -171,9 +172,9 @@ export const removeProduct = async (
   try {
     const { error } = validateFindProd(req.params);
 
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message || '',
         status: 403,
       });
@@ -183,7 +184,7 @@ export const removeProduct = async (
 
     const prod = await findProduct({ id });
 
-    if (!prod) {
+    if (prod == null) {
       return jsonResponse({
         res,
         message: 'Product Not Found!',
@@ -216,7 +217,7 @@ export const buy = async (req: Request, res: Response, next: NextFunction) => {
 
     if (role !== UserRole.BUYER) {
       return jsonResponse({
-        res: res,
+        res,
         message: 'Forbidden, only buyers can buy a product',
         status: 403,
       });
@@ -224,9 +225,9 @@ export const buy = async (req: Request, res: Response, next: NextFunction) => {
 
     const { error } = validateFindProd(req.params);
 
-    if (error) {
+    if (error != null) {
       return jsonResponse({
-        res: res,
+        res,
         message: error?.message || '',
         status: 403,
       });
@@ -235,7 +236,7 @@ export const buy = async (req: Request, res: Response, next: NextFunction) => {
     const product = await findProduct({ id: req.params.id });
     const user: IUserModel | null = await findUser({ id });
 
-    if (!product) {
+    if (product == null) {
       return jsonResponse({
         res,
         message: 'Product Not Found!',
@@ -243,7 +244,7 @@ export const buy = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    if (user) {
+    if (user != null) {
       if (user?.deposit < product.cost) {
         return jsonResponse({
           res,

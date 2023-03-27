@@ -1,8 +1,7 @@
-
 import sequelize from '../../db/db';
 import {
-  IProductInput,
-  IProductSearchParam,
+  type IProductInput,
+  type IProductSearchParam,
 } from '../../interface/product';
 import Product from '../product';
 import User from '../user';
